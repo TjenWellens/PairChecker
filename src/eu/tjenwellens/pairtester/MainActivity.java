@@ -26,38 +26,27 @@ import java.util.Random;
 
 public class MainActivity extends Activity
 {
+    /* contains all the key-value pairs */
+    private List<Pair> pairs = null;
+    private boolean checked = true;
+    private Pair currentPair;
     //In an Activity
-    private String splitter="=";
+    private String SPLITTER = "=";
     private String[] mFileList;
-    private File mPath = new File(Environment.getExternalStorageDirectory().getPath() + "//PairTester//");
-    private String mChosenFile;
+    private final File DIRECTORY = new File(Environment.getExternalStorageDirectory().getPath() + "//PairTester//");
     private static final String FTYPE = ".txt";
     private static final int DIALOG_LOAD_FILE = 1000;
 
-    private void loadFileList()
+    /**
+     * Called when the activity is first created.
+     */
+    @Override
+    public void onCreate(Bundle savedInstanceState)
     {
-        try
-        {
-            mPath.mkdirs();
-        } catch (SecurityException e)
-        {
-            Log.e("TAG", "unable to write on the sd card " + e.toString());
-        }
-        if (mPath.exists())
-        {
-            FilenameFilter filter = new FilenameFilter()
-            {
-                public boolean accept(File dir, String filename)
-                {
-                    File sel = new File(dir, filename);
-                    return filename.contains(FTYPE) || sel.isDirectory();
-                }
-            };
-            mFileList = mPath.list(filter);
-        } else
-        {
-            mFileList = new String[0];
-        }
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.main);
+        loadFileList();
+        reset(pairs);
     }
 
     @Override
@@ -80,8 +69,7 @@ public class MainActivity extends Activity
                 {
                     public void onClick(DialogInterface dialog, int which)
                     {
-                        mChosenFile = mFileList[which];
-                        load(mChosenFile);
+                        load(mFileList[which]);
                         //you can do stuff with the file here too
                     }
                 });
@@ -89,22 +77,6 @@ public class MainActivity extends Activity
         }
         dialog = builder.show();
         return dialog;
-    }
-    /* contains all the key-value pairs */
-    private List<Pair> pairs = null;
-    private boolean checked = true;
-    private Pair currentPair;
-
-    /**
-     * Called when the activity is first created.
-     */
-    @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
-        loadFileList();
-        reset(pairs);
     }
 
     @Override
@@ -114,8 +86,38 @@ public class MainActivity extends Activity
         return true;
     }
 
+    private void loadFileList()
+    {
+        try
+        {
+            DIRECTORY.mkdirs();
+        } catch (SecurityException e)
+        {
+            Log.e("TAG", "unable to write on the sd card " + e.toString());
+        }
+        if (DIRECTORY.exists())
+        {
+            FilenameFilter filter = new FilenameFilter()
+            {
+                public boolean accept(File dir, String filename)
+                {
+                    File sel = new File(dir, filename);
+                    return filename.contains(FTYPE) || sel.isDirectory();
+                }
+            };
+            mFileList = DIRECTORY.list(filter);
+        } else
+        {
+            mFileList = new String[0];
+        }
+    }
+
     private void load(String fileName)
     {
+        if (fileName == null)
+        {
+            return;
+        }
         List<Pair> newPairs = read(Environment.getExternalStorageDirectory().getPath() + "//PairTester//" + fileName);
         if (newPairs.isEmpty())
         {
@@ -162,22 +164,25 @@ public class MainActivity extends Activity
             fIn = new FileInputStream(myFile);
             BufferedReader myReader = new BufferedReader(new InputStreamReader(fIn));
             String line;
+            int counter = 0;
             while ((line = myReader.readLine()) != null)
             {
                 if (line.startsWith("#"))
                 {
                     continue;
                 }
-                String[] s = line.split(splitter, 2);
+                String[] s = line.split(SPLITTER, 2);
                 if (s.length == 2)
                 {
                     newPairs.add(new Pair(s[0], s[1]));
+                    counter++;
                 }
             }
             myReader.close();
-            Toast.makeText(getBaseContext(), "Done reading SD 'mysdfile.txt'", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getBaseContext(), "New entries read: " + counter, Toast.LENGTH_SHORT).show();
         } catch (IOException e)
         {
+            Toast.makeText(getBaseContext(), "Error reading file", Toast.LENGTH_SHORT).show();
         }
         return newPairs;
     }
@@ -249,6 +254,9 @@ public class MainActivity extends Activity
         newPairs.add(new Pair("04", "sour"));
         newPairs.add(new Pair("05", "soul"));
         newPairs.add(new Pair("06", "siege"));
+        newPairs.add(new Pair("07", "sock"));
+        newPairs.add(new Pair("08", "safe"));
+        newPairs.add(new Pair("09", "zap"));
         return newPairs;
     }
 
