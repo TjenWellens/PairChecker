@@ -16,12 +16,31 @@
         android:id="@+id/txtValue"
         android:text="Value"
     />
-
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="top" >
+        <Button
+            android:id="@+id/btnWrong"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="btnWrong"
+            android:text="@string/wrong" />
+        <Button
+            android:id="@+id/btnCorrect"
+            android:layout_width="wrap_content"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:onClick="btnCorrect"
+            android:text="@string/correct" />
+    </LinearLayout>
     <Button
         android:id="@+id/btnCheckNext"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="btnCheckNext"
         android:text="@string/start" />
+    
 </LinearLayout>
 

@@ -27,9 +27,9 @@ import java.util.Random;
 public class MainActivity extends Activity
 {
     /* contains all the key-value pairs */
-    private List<Pair> pairs = null;
+    private List<RatedPair> pairs = null;
     private boolean checked = true;
-    private Pair currentPair;
+    private RatedPair currentPair;
     //In an Activity
     private String SPLITTER = "=";
     private String[] mFileList;
@@ -86,6 +86,23 @@ public class MainActivity extends Activity
         return true;
     }
 
+    // This method is called once the menu is selected
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        switch (item.getItemId())
+        {
+            // We have only one menu option
+            case R.id.menu_select_file:
+                onCreateDialog(DIALOG_LOAD_FILE);
+                break;
+            case R.id.menu_show_score:
+                schowScore();
+                break;
+        }
+        return true;
+    }
+
     private void loadFileList()
     {
         try
@@ -118,7 +135,7 @@ public class MainActivity extends Activity
         {
             return;
         }
-        List<Pair> newPairs = read(Environment.getExternalStorageDirectory().getPath() + "//PairTester//" + fileName);
+        List<RatedPair> newPairs = read(Environment.getExternalStorageDirectory().getPath() + "//PairTester//" + fileName);
         if (newPairs.isEmpty())
         {
             return;
@@ -127,7 +144,7 @@ public class MainActivity extends Activity
         reset(newPairs);
     }
 
-    private void reset(List<Pair> newPairs)
+    private void reset(List<RatedPair> newPairs)
     {
         if (newPairs == null || newPairs.isEmpty())
         {
@@ -154,9 +171,9 @@ public class MainActivity extends Activity
         btn.setText(R.string.start);
     }
 
-    private List<Pair> read(String path)
+    private List<RatedPair> read(String path)
     {
-        List<Pair> newPairs = new ArrayList<Pair>();
+        List<RatedPair> newPairs = new ArrayList<RatedPair>();
         try
         {
             File myFile = new File(path);
@@ -174,7 +191,7 @@ public class MainActivity extends Activity
                 String[] s = line.split(SPLITTER, 2);
                 if (s.length == 2)
                 {
-                    newPairs.add(new Pair(s[0], s[1]));
+                    newPairs.add(new RatedPair(s[0], s[1]));
                     counter++;
                 }
             }
@@ -187,20 +204,6 @@ public class MainActivity extends Activity
         return newPairs;
     }
 
-    // This method is called once the menu is selected
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item)
-    {
-        switch (item.getItemId())
-        {
-            // We have only one menu option
-            case R.id.menu_select_file:
-                onCreateDialog(DIALOG_LOAD_FILE);
-                break;
-        }
-        return true;
-    }
-
     public void btnCheckNext(View button)
     {
         if (checked)
@@ -209,6 +212,22 @@ public class MainActivity extends Activity
         } else
         {
             showValue();
+        }
+    }
+
+    public void btnCorrect(View button)
+    {
+        if (currentPair != null)
+        {
+            currentPair.correct();
+        }
+    }
+
+    public void btnWrong(View button)
+    {
+        if (currentPair != null)
+        {
+            currentPair.wrong();
         }
     }
 
@@ -236,7 +255,7 @@ public class MainActivity extends Activity
         checked = true;
     }
 
-    private void showKey(Pair p)
+    private void showKey(RatedPair p)
     {
         final TextView tvKey = (TextView) findViewById(R.id.txtKey);
         final TextView tvValue = (TextView) findViewById(R.id.txtValue);
@@ -244,19 +263,19 @@ public class MainActivity extends Activity
         tvValue.setText(R.string.empty);
     }
 
-    private static List<Pair> initPairs()
+    private static List<RatedPair> initPairs()
     {
-        List<Pair> newPairs = new ArrayList<Pair>();
-        newPairs.add(new Pair("00", "SOS"));
-        newPairs.add(new Pair("01", "sad"));
-        newPairs.add(new Pair("02", "son"));
-        newPairs.add(new Pair("03", "SAME"));
-        newPairs.add(new Pair("04", "sour"));
-        newPairs.add(new Pair("05", "soul"));
-        newPairs.add(new Pair("06", "siege"));
-        newPairs.add(new Pair("07", "sock"));
-        newPairs.add(new Pair("08", "safe"));
-        newPairs.add(new Pair("09", "zap"));
+        List<RatedPair> newPairs = new ArrayList<RatedPair>();
+        newPairs.add(new RatedPair("00", "SOS"));
+        newPairs.add(new RatedPair("01", "sad"));
+        newPairs.add(new RatedPair("02", "son"));
+        newPairs.add(new RatedPair("03", "SAME"));
+        newPairs.add(new RatedPair("04", "sour"));
+        newPairs.add(new RatedPair("05", "soul"));
+        newPairs.add(new RatedPair("06", "siege"));
+        newPairs.add(new RatedPair("07", "sock"));
+        newPairs.add(new RatedPair("08", "safe"));
+        newPairs.add(new RatedPair("09", "zap"));
         return newPairs;
     }
 
@@ -264,5 +283,21 @@ public class MainActivity extends Activity
     {
         final Button btn = (Button) findViewById(R.id.btnCheckNext);
         btn.setText(resid);
+    }
+
+    private void schowScore()
+    {
+        int score = 0;
+        int corrects = 0;
+        int wrongs = 0;
+        int total;
+        for (RatedPair ratedPair : pairs)
+        {
+            corrects += ratedPair.getCorrects();
+            wrongs += ratedPair.getWrongs();
+        }
+        total = corrects + wrongs;
+        score = (int) Math.round(100 * corrects / total);
+        Toast.makeText(this, "Your current score is: " + score + "%", Toast.LENGTH_LONG).show();
     }
 }
