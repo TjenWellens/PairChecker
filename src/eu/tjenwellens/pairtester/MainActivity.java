@@ -27,15 +27,15 @@ import java.util.Random;
 public class MainActivity extends Activity
 {
     /* contains all the key-value pairs */
-    private List<RatedPair> pairs = null;
+    private List<RatedPairI> pairs = null;
     private boolean checked = true;
-    private RatedPair currentPair;
+    private RatedPairI currentPair;
     //In an Activity
     private String SPLITTER = "=";
     private String[] mFileList;
-    private final File DIRECTORY = new File(Environment.getExternalStorageDirectory().getPath() + "//PairTester//");
-    private static final String FTYPE = ".txt";
     private static final int DIALOG_LOAD_FILE = 1000;
+    private final String FTYPE = ".txt";
+    private final File DIRECTORY = new File(Environment.getExternalStorageDirectory().getPath() + "//PairTester//");
 
     /**
      * Called when the activity is first created.
@@ -46,7 +46,31 @@ public class MainActivity extends Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         loadFileList();
-        reset(pairs);
+        reset(loadState());
+    }
+
+    @Override
+    protected void onDestroy()
+    {
+        super.onDestroy();
+        saveState(pairs);
+    }
+
+    private List<RatedPairI> loadState()
+    {
+        Toast.makeText(this, "loading", Toast.LENGTH_SHORT).show();
+        return DatabaseHandler.getInstance(this).getAllPairs();
+    }
+
+    private void saveState(List<RatedPairI> savePairs)
+    {
+        DatabaseHandler dbh = DatabaseHandler.getInstance(this);
+        dbh.clearPairs();
+        if (savePairs != null && !savePairs.isEmpty())
+        {
+            int saves = dbh.addAllPairs(savePairs);
+            Toast.makeText(this, "Saved " + saves + " items.", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -97,7 +121,10 @@ public class MainActivity extends Activity
                 onCreateDialog(DIALOG_LOAD_FILE);
                 break;
             case R.id.menu_show_score:
-                schowScore();
+                showScore();
+                break;
+            case R.id.menu_clear_score:
+                clearScore();
                 break;
         }
         return true;
@@ -135,7 +162,7 @@ public class MainActivity extends Activity
         {
             return;
         }
-        List<RatedPair> newPairs = read(Environment.getExternalStorageDirectory().getPath() + "//PairTester//" + fileName);
+        List<RatedPairI> newPairs = read(Environment.getExternalStorageDirectory().getPath() + "//PairTester//" + fileName);
         if (newPairs.isEmpty())
         {
             return;
@@ -144,7 +171,7 @@ public class MainActivity extends Activity
         reset(newPairs);
     }
 
-    private void reset(List<RatedPair> newPairs)
+    private void reset(List<RatedPairI> newPairs)
     {
         if (newPairs == null || newPairs.isEmpty())
         {
@@ -153,6 +180,7 @@ public class MainActivity extends Activity
         pairs = newPairs;
         resetState();
         resetGUI();
+        Toast.makeText(this, "" + pairs.size() + " items loaded", Toast.LENGTH_LONG).show();
     }
 
     private void resetState()
@@ -163,6 +191,7 @@ public class MainActivity extends Activity
 
     private void resetGUI()
     {
+        setContentView(R.layout.main);
         final TextView tvKey = (TextView) findViewById(R.id.txtKey);
         final TextView tvValue = (TextView) findViewById(R.id.txtValue);
         final Button btn = (Button) findViewById(R.id.btnCheckNext);
@@ -171,9 +200,9 @@ public class MainActivity extends Activity
         btn.setText(R.string.start);
     }
 
-    private List<RatedPair> read(String path)
+    private List<RatedPairI> read(String path)
     {
-        List<RatedPair> newPairs = new ArrayList<RatedPair>();
+        List<RatedPairI> newPairs = new ArrayList<RatedPairI>();
         try
         {
             File myFile = new File(path);
@@ -191,7 +220,7 @@ public class MainActivity extends Activity
                 String[] s = line.split(SPLITTER, 2);
                 if (s.length == 2)
                 {
-                    newPairs.add(new RatedPair(s[0], s[1]));
+                    newPairs.add(PairFactory.createPair(this, counter, s[0], s[1]));
                     counter++;
                 }
             }
@@ -206,6 +235,11 @@ public class MainActivity extends Activity
 
     public void btnCheckNext(View button)
     {
+        checkNext();
+    }
+
+    private void checkNext()
+    {
         if (checked)
         {
             next();
@@ -217,29 +251,37 @@ public class MainActivity extends Activity
 
     public void btnCorrect(View button)
     {
-        if (currentPair != null)
+        if (checked && currentPair != null)
         {
             currentPair.correct();
+            checkNext();
         }
     }
 
     public void btnWrong(View button)
     {
-        if (currentPair != null)
+        if (checked && currentPair != null)
         {
             currentPair.wrong();
+            checkNext();
         }
     }
 
     private void next()
     {
         Random random = new Random(System.currentTimeMillis());
-        currentPair = pairs.get(random.nextInt(pairs.size()));
+        currentPair = pairs.get(getRandomIndex());
         showKey(currentPair);
         // change button text
         changeButtonText(R.string.check);
         // swap turn
         checked = false;
+    }
+
+    private int getRandomIndex()
+    {
+        Random random = new Random(System.currentTimeMillis());
+        return random.nextInt(pairs.size());
     }
 
     private void showValue()
@@ -255,7 +297,7 @@ public class MainActivity extends Activity
         checked = true;
     }
 
-    private void showKey(RatedPair p)
+    private void showKey(RatedPairI p)
     {
         final TextView tvKey = (TextView) findViewById(R.id.txtKey);
         final TextView tvValue = (TextView) findViewById(R.id.txtValue);
@@ -263,19 +305,19 @@ public class MainActivity extends Activity
         tvValue.setText(R.string.empty);
     }
 
-    private static List<RatedPair> initPairs()
+    private List<RatedPairI> initPairs()
     {
-        List<RatedPair> newPairs = new ArrayList<RatedPair>();
-        newPairs.add(new RatedPair("00", "SOS"));
-        newPairs.add(new RatedPair("01", "sad"));
-        newPairs.add(new RatedPair("02", "son"));
-        newPairs.add(new RatedPair("03", "SAME"));
-        newPairs.add(new RatedPair("04", "sour"));
-        newPairs.add(new RatedPair("05", "soul"));
-        newPairs.add(new RatedPair("06", "siege"));
-        newPairs.add(new RatedPair("07", "sock"));
-        newPairs.add(new RatedPair("08", "safe"));
-        newPairs.add(new RatedPair("09", "zap"));
+        List<RatedPairI> newPairs = new ArrayList<RatedPairI>();
+        newPairs.add(PairFactory.createPair(this, 0, "00", "SOS"));
+        newPairs.add(PairFactory.createPair(this, 1, "01", "sad"));
+        newPairs.add(PairFactory.createPair(this, 2, "02", "son"));
+        newPairs.add(PairFactory.createPair(this, 3, "03", "SAME"));
+        newPairs.add(PairFactory.createPair(this, 4, "04", "sour"));
+        newPairs.add(PairFactory.createPair(this, 5, "05", "soul"));
+        newPairs.add(PairFactory.createPair(this, 6, "06", "siege"));
+        newPairs.add(PairFactory.createPair(this, 7, "07", "sock"));
+        newPairs.add(PairFactory.createPair(this, 8, "08", "safe"));
+        newPairs.add(PairFactory.createPair(this, 9, "09", "zap"));
         return newPairs;
     }
 
@@ -285,19 +327,30 @@ public class MainActivity extends Activity
         btn.setText(resid);
     }
 
-    private void schowScore()
+    private void showScore()
     {
-        int score = 0;
-        int corrects = 0;
-        int wrongs = 0;
-        int total;
-        for (RatedPair ratedPair : pairs)
+        int score, total, corrects = 0, wrongs = 0;
+        for (RatedPairI pair : pairs)
         {
-            corrects += ratedPair.getCorrects();
-            wrongs += ratedPair.getWrongs();
+            corrects += pair.getCorrects();
+            wrongs += pair.getWrongs();
         }
         total = corrects + wrongs;
-        score = (int) Math.round(100 * corrects / total);
-        Toast.makeText(this, "Your current score is: " + score + "%", Toast.LENGTH_LONG).show();
+        if (total == 0)
+        {
+            Toast.makeText(this, "Your don't have a score...", Toast.LENGTH_LONG).show();
+        } else
+        {
+            score = (int) Math.round(100 * corrects / total);
+            Toast.makeText(this, "Your current score is: " + score + "%", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void clearScore()
+    {
+        for (RatedPairI pair : pairs)
+        {
+            pair.clearScore();
+        }
     }
 }

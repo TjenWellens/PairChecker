@@ -8,13 +8,13 @@
         android:layout_width="fill_parent" 
         android:layout_height="wrap_content" 
         android:id="@+id/txtKey"
-        android:text="Key"
+        android:textSize="30dp"
     />
     <TextView  
         android:layout_width="fill_parent" 
         android:layout_height="wrap_content" 
         android:id="@+id/txtValue"
-        android:text="Value"
+        android:textSize="30dp"
     />
     <LinearLayout
         android:layout_width="match_parent"
@@ -26,6 +26,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:onClick="btnWrong"
+            android:background="@drawable/x"
             android:text="@string/wrong" />
         <Button
             android:id="@+id/btnCorrect"
@@ -33,6 +34,7 @@
             android:layout_weight="1"
             android:layout_height="wrap_content"
             android:onClick="btnCorrect"
+            android:background="@drawable/v"
             android:text="@string/correct" />
     </LinearLayout>
     <Button

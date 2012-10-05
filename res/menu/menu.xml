@@ -1,8 +1,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/menu_show_score"
-          android:title="@string/menu_show_score"
-          android:orderInCategory="100" />
     <item android:id="@+id/menu_select_file"
           android:title="@string/menu_select_file"
+          android:orderInCategory="100" />
+    <item android:id="@+id/menu_clear_score"
+          android:title="@string/menu_clear_score"
+          android:orderInCategory="100" />
+    <item android:id="@+id/menu_show_score"
+          android:title="@string/menu_show_score"
           android:orderInCategory="100" />
 </menu>
