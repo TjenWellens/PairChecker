@@ -8,9 +8,9 @@ import android.content.Context;
  */
 public class PairFactory
 {
-    public static RatedPairI loadPair(Context context, int db_id, String db_key, String db_value, int db_corrects, int db_wrongs, boolean db_last_try_correct)
+    public static RatedPairI loadPair(Context context, int db_id, String db_key, String db_value, int db_corrects, int db_wrongs, int db_last_try)
     {
-        return new RatedPair(db_id, db_key, db_value, db_corrects, db_wrongs, db_last_try_correct);
+        return new RatedPair(db_id, db_key, db_value, db_corrects, db_wrongs, db_last_try);
     }
 
     public static RatedPairI createPair(Context context, int db_id, String db_key, String db_value)
@@ -21,19 +21,19 @@ public class PairFactory
     private static class RatedPair extends Pair implements RatedPairI
     {
         private int corrects, wrongs;
-        private boolean lastTryCorrect;
+        private int lastTry;
 
         public RatedPair(int id, String key, String value)
         {
             super(id, key, value);
         }
 
-        public RatedPair(int id, String key, String value, int corrects, int wrongs, boolean lastTryCorrect)
+        public RatedPair(int id, String key, String value, int corrects, int wrongs, int lastTry)
         {
             super(id, key, value);
             this.corrects = corrects;
             this.wrongs = wrongs;
-            this.lastTryCorrect = lastTryCorrect;
+            this.lastTry = lastTry;
         }
 
         public int getCorrects()
@@ -46,28 +46,33 @@ public class PairFactory
             return wrongs;
         }
 
-        public boolean getLastTryCorrect()
+        public int getLastTry()
         {
-            return lastTryCorrect;
+            return lastTry;
         }
 
         public void correct()
         {
             corrects++;
-            lastTryCorrect = true;
+            lastTry = 1;
         }
 
         public void wrong()
         {
             wrongs++;
-            lastTryCorrect = false;
+            lastTry = -1;
         }
 
         public void clearScore()
         {
             corrects = 0;
             wrongs = 0;
-            lastTryCorrect = false;
+            lastTry = 0;
+        }
+
+        public void skip()
+        {
+            lastTry = 0;
         }
     }
 

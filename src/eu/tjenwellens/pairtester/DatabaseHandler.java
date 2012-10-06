@@ -90,7 +90,7 @@ public class DatabaseHandler extends SQLiteOpenHelper
         values.put(KEY_VALUE, pair.getValue());        // title
         values.put(KEY_CORRECTS, pair.getCorrects()); // begin
         values.put(KEY_WRONGS, pair.getWrongs()); // end
-        values.put(KEY_LAST_TRY_CORRECT, pair.getLastTryCorrect()); // description
+        values.put(KEY_LAST_TRY_CORRECT, pair.getLastTry()); // description
 
         // Inserting Row
         db.insert(TABLE_PAIRS, null, values);
@@ -139,11 +139,11 @@ public class DatabaseHandler extends SQLiteOpenHelper
         String db_value = cursor.getString(2);
         int db_corrects = Integer.parseInt(cursor.getString(3));
         int db_wrongs = Integer.parseInt(cursor.getString(4));
-        boolean db_last_try_correct = Integer.parseInt(cursor.getString(4)) == 1;
+        int db_last_try = Integer.parseInt(cursor.getString(4));
         cursor.close();
         db.close();
 
-        RatedPairI pair = PairFactory.loadPair(context, db_id, db_key, db_value, db_corrects, db_wrongs, db_last_try_correct);
+        RatedPairI pair = PairFactory.loadPair(context, db_id, db_key, db_value, db_corrects, db_wrongs, db_last_try);
         // return contact
         return pair;
     }
@@ -168,9 +168,9 @@ public class DatabaseHandler extends SQLiteOpenHelper
                 String db_value = cursor.getString(2);
                 int db_corrects = Integer.parseInt(cursor.getString(3));
                 int db_wrongs = Integer.parseInt(cursor.getString(4));
-                boolean db_last_try_correct = Integer.parseInt(cursor.getString(4)) == 1;
+                int db_last_try = Integer.parseInt(cursor.getString(4));
 
-                RatedPairI pair = PairFactory.loadPair(context, db_id, db_key, db_value, db_corrects, db_wrongs, db_last_try_correct);
+                RatedPairI pair = PairFactory.loadPair(context, db_id, db_key, db_value, db_corrects, db_wrongs, db_last_try);
                 // Adding contact to list
                 contactList.add(pair);
             } while (cursor.moveToNext());
@@ -193,7 +193,7 @@ public class DatabaseHandler extends SQLiteOpenHelper
         values.put(KEY_VALUE, pair.getValue());        // title
         values.put(KEY_CORRECTS, pair.getCorrects()); // begin
         values.put(KEY_WRONGS, pair.getWrongs()); // end
-        values.put(KEY_LAST_TRY_CORRECT, pair.getLastTryCorrect()); // description
+        values.put(KEY_LAST_TRY_CORRECT, pair.getLastTry()); // description
         int result = db.update(TABLE_PAIRS, values, KEY_ID + " = ?",
                 new String[]
                 {

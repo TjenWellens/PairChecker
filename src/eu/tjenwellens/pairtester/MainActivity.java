@@ -21,16 +21,12 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
 
 public class MainActivity extends Activity
 {
-    /* contains all the key-value pairs */
-    private List<RatedPairI> pairs = null;
-    private boolean checked = true;
-    private RatedPairI currentPair;
+    //new
+    PairSet pairset;
     //In an Activity
     private String SPLITTER = "=";
     private String[] mFileList;
@@ -54,24 +50,7 @@ public class MainActivity extends Activity
     protected void onDestroy()
     {
         super.onDestroy();
-        saveState(pairs);
-    }
-
-    private List<RatedPairI> loadState()
-    {
-        Toast.makeText(this, "loading", Toast.LENGTH_SHORT).show();
-        return DatabaseHandler.getInstance(this).getAllPairs();
-    }
-
-    private void saveState(List<RatedPairI> savePairs)
-    {
-        DatabaseHandler dbh = DatabaseHandler.getInstance(this);
-        dbh.clearPairs();
-        if (savePairs != null && !savePairs.isEmpty())
-        {
-            int saves = dbh.addAllPairs(savePairs);
-            Toast.makeText(this, "Saved " + saves + " items.", Toast.LENGTH_SHORT).show();
-        }
+        saveState(pairset.getPairs());
     }
 
     @Override
@@ -134,6 +113,23 @@ public class MainActivity extends Activity
         return true;
     }
 
+    private List<RatedPairI> loadState()
+    {
+        Toast.makeText(this, "loading", Toast.LENGTH_SHORT).show();
+        return DatabaseHandler.getInstance(this).getAllPairs();
+    }
+
+    private void saveState(List<RatedPairI> savePairs)
+    {
+        DatabaseHandler dbh = DatabaseHandler.getInstance(this);
+        dbh.clearPairs();
+        if (savePairs != null && !savePairs.isEmpty())
+        {
+            int saves = dbh.addAllPairs(savePairs);
+            Toast.makeText(this, "Saved " + saves + " items.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     private void loadFileList()
     {
         try
@@ -171,7 +167,6 @@ public class MainActivity extends Activity
         {
             return;
         }
-        pairs = newPairs;
         reset(newPairs);
     }
 
@@ -181,16 +176,10 @@ public class MainActivity extends Activity
         {
             newPairs = initPairs();
         }
-        pairs = newPairs;
-        resetState();
+        pairset = new PairSet(newPairs);
         resetGUI();
-        Toast.makeText(this, "" + pairs.size() + " items loaded", Toast.LENGTH_LONG).show();
-    }
-
-    private void resetState()
-    {
-        checked = true;
-        currentPair = null;
+        newState();
+        Toast.makeText(this, "" + newPairs.size() + " items loaded", Toast.LENGTH_LONG).show();
     }
 
     private void resetGUI()
@@ -198,10 +187,8 @@ public class MainActivity extends Activity
         setContentView(R.layout.main);
         final TextView tvKey = (TextView) findViewById(R.id.txtKey);
         final TextView tvValue = (TextView) findViewById(R.id.txtValue);
-        final Button btn = (Button) findViewById(R.id.btnCheckNext);
         tvKey.setText(R.string.empty);
         tvValue.setText(R.string.empty);
-        btn.setText(R.string.start);
     }
 
     private List<RatedPairI> read(String path)
@@ -237,97 +224,121 @@ public class MainActivity extends Activity
         return newPairs;
     }
 
-    public void btnCheckNext(View button)
-    {
-        if (pool != null && pairs != null && currentPair != null)
-        {
-            pool.add(pairs.indexOf(currentPair));
-        }
-        checkNext();
-    }
-
-    private void checkNext()
-    {
-        if (checked)
-        {
-            next();
-        } else
-        {
-            showValue();
-        }
-    }
-
     public void btnCorrect(View button)
     {
-        if (checked && currentPair != null)
+        if (pairset.correct())
         {
-            currentPair.correct();
-            checkNext();
+            next();
+        }else{
+            Toast.makeText(this, "You can't do that", Toast.LENGTH_SHORT).show();
         }
     }
 
     public void btnWrong(View button)
     {
-        if (checked && currentPair != null)
+        if (pairset.wrong())
         {
-            currentPair.wrong();
-            pool.add(pairs.indexOf(currentPair));
-            checkNext();
+            next();
+        }else{
+            Toast.makeText(this, "You can't do that", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    public void btnSkip(View button)
+    {
+        if (pairset.skip())
+        {
+            next();
+        }else{
+            Toast.makeText(this, "You can't do that", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void btnCheck(View button)
+    {
+        if (pairset.check())
+        {
+            check();
+        }else{
+            Toast.makeText(this, "You can't do that", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void btnStart(View button)
+    {
+        if (pairset.start())
+        {
+            next();
+        }else{
+            Toast.makeText(this, "You can't do that", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void check()
+    {
+        showValue();
+        checkedState();
     }
 
     private void next()
     {
-        currentPair = pairs.get(getRandomIndex());
-        showKey(currentPair);
-        // change button text
-        changeButtonText(R.string.check);
-        // swap turn
-        checked = false;
+        showKey(pairset.getCurrentKey());
+        uncheckedState();
     }
 
-    private List<Integer> numbers()
+    private void uncheckedState()
     {
-        List<Integer> ret = new LinkedList<Integer>();
-        for (int i = 0; i < pairs.size(); i++)
-        {
-            ret.add(i);
-        }
-        return ret;
+        final Button btnCheck = (Button) findViewById(R.id.btnCheck);
+        final Button btnWrong = (Button) findViewById(R.id.btnWrong);
+        final Button btnCorrect = (Button) findViewById(R.id.btnCorrect);
+        final Button btnSkip = (Button) findViewById(R.id.btnSkip);
+        final Button btnStart = (Button) findViewById(R.id.btnStart);
+        btnCheck.setEnabled(true);
+        btnWrong.setEnabled(false);
+        btnCorrect.setEnabled(false);
+        btnSkip.setEnabled(false);
+        btnStart.setEnabled(false);
     }
-    private List<Integer> pool;
-    private Random random = new Random(System.currentTimeMillis());
 
-    private int getRandomIndex()
+    private void checkedState()
     {
-        if (pool == null || pool.isEmpty())
-        {
-            pool = numbers();
-            Toast.makeText(this, "Starting new training course", Toast.LENGTH_SHORT).show();
-        }
-        Integer ret = pool.get(random.nextInt(pool.size()));
-        pool.remove(ret);
-        return ret;
+        final Button btnCheck = (Button) findViewById(R.id.btnCheck);
+        final Button btnWrong = (Button) findViewById(R.id.btnWrong);
+        final Button btnCorrect = (Button) findViewById(R.id.btnCorrect);
+        final Button btnSkip = (Button) findViewById(R.id.btnSkip);
+        final Button btnStart = (Button) findViewById(R.id.btnStart);
+        btnCheck.setEnabled(false);
+        btnWrong.setEnabled(true);
+        btnCorrect.setEnabled(true);
+        btnSkip.setEnabled(true);
+        btnStart.setEnabled(false);
+    }
+
+    private void newState()
+    {
+        final Button btnCheck = (Button) findViewById(R.id.btnCheck);
+        final Button btnWrong = (Button) findViewById(R.id.btnWrong);
+        final Button btnCorrect = (Button) findViewById(R.id.btnCorrect);
+        final Button btnSkip = (Button) findViewById(R.id.btnSkip);
+        final Button btnStart = (Button) findViewById(R.id.btnStart);
+        btnCheck.setEnabled(false);
+        btnWrong.setEnabled(false);
+        btnCorrect.setEnabled(false);
+        btnSkip.setEnabled(false);
+        btnStart.setEnabled(true);
     }
 
     private void showValue()
     {
-        if (currentPair != null)
-        {
-            final TextView tvValue = (TextView) findViewById(R.id.txtValue);
-            tvValue.setText(currentPair.getValue());
-        }
-        // change button text
-        changeButtonText(R.string.next);
-        // swap turn
-        checked = true;
+        final TextView tvValue = (TextView) findViewById(R.id.txtValue);
+        tvValue.setText(pairset.getCurrentValue());
     }
 
-    private void showKey(RatedPairI p)
+    private void showKey(String key)
     {
         final TextView tvKey = (TextView) findViewById(R.id.txtKey);
         final TextView tvValue = (TextView) findViewById(R.id.txtValue);
-        tvKey.setText(p.getKey());
+        tvKey.setText(key);
         tvValue.setText(R.string.empty);
     }
 
@@ -347,37 +358,21 @@ public class MainActivity extends Activity
         return newPairs;
     }
 
-    private void changeButtonText(int resid)
-    {
-        final Button btn = (Button) findViewById(R.id.btnCheckNext);
-        btn.setText(resid);
-    }
-
     private void showScore()
     {
-        int score, total, corrects = 0, wrongs = 0;
-        for (RatedPairI pair : pairs)
-        {
-            corrects += pair.getCorrects();
-            wrongs += pair.getWrongs();
-        }
-        total = corrects + wrongs;
-        if (total == 0)
+        int score = pairset.getScore();
+        if (score < 0)
         {
             Toast.makeText(this, "Your don't have a score...", Toast.LENGTH_LONG).show();
         } else
         {
-            score = (int) Math.round(100 * corrects / total);
             Toast.makeText(this, "Your current score is: " + score + "%", Toast.LENGTH_LONG).show();
         }
     }
 
     private void clearScore()
     {
-        for (RatedPairI pair : pairs)
-        {
-            pair.clearScore();
-        }
+        pairset.resetScore();
         Toast.makeText(this, "Score reset.", Toast.LENGTH_LONG).show();
     }
 

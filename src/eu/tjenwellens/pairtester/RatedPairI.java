@@ -10,11 +10,13 @@ public interface RatedPairI extends PairI
 
     int getWrongs();
 
-    boolean getLastTryCorrect();
+    int getLastTry();
 
     void correct();
 
     void wrong();
 
     public void clearScore();
+
+    public void skip();
 }
