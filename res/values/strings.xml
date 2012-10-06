@@ -10,6 +10,7 @@
     <string name="wrong">Wrong</string>
     <string name="menu_show_score">Show score</string>
     <string name="menu_clear_score">Clear score</string>
+    <string name="menu_clear_entries">Clear items</string>
     
     <color name="red">#FF0000</color>
     <color name="green">#00FF00</color>
