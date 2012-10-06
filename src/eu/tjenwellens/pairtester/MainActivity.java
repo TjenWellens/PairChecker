@@ -21,6 +21,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
@@ -125,6 +126,9 @@ public class MainActivity extends Activity
                 break;
             case R.id.menu_clear_score:
                 clearScore();
+                break;
+            case R.id.menu_clear_entries:
+                clearEntries();
                 break;
         }
         return true;
@@ -235,6 +239,10 @@ public class MainActivity extends Activity
 
     public void btnCheckNext(View button)
     {
+        if (pool != null && pairs != null && currentPair != null)
+        {
+            pool.add(pairs.indexOf(currentPair));
+        }
         checkNext();
     }
 
@@ -263,13 +271,13 @@ public class MainActivity extends Activity
         if (checked && currentPair != null)
         {
             currentPair.wrong();
+            pool.add(pairs.indexOf(currentPair));
             checkNext();
         }
     }
 
     private void next()
     {
-        Random random = new Random(System.currentTimeMillis());
         currentPair = pairs.get(getRandomIndex());
         showKey(currentPair);
         // change button text
@@ -278,10 +286,28 @@ public class MainActivity extends Activity
         checked = false;
     }
 
+    private List<Integer> numbers()
+    {
+        List<Integer> ret = new LinkedList<Integer>();
+        for (int i = 0; i < pairs.size(); i++)
+        {
+            ret.add(i);
+        }
+        return ret;
+    }
+    private List<Integer> pool;
+    private Random random = new Random(System.currentTimeMillis());
+
     private int getRandomIndex()
     {
-        Random random = new Random(System.currentTimeMillis());
-        return random.nextInt(pairs.size());
+        if (pool == null || pool.isEmpty())
+        {
+            pool = numbers();
+            Toast.makeText(this, "Starting new training course", Toast.LENGTH_SHORT).show();
+        }
+        Integer ret = pool.get(random.nextInt(pool.size()));
+        pool.remove(ret);
+        return ret;
     }
 
     private void showValue()
@@ -308,16 +334,16 @@ public class MainActivity extends Activity
     private List<RatedPairI> initPairs()
     {
         List<RatedPairI> newPairs = new ArrayList<RatedPairI>();
-        newPairs.add(PairFactory.createPair(this, 0, "00", "SOS"));
-        newPairs.add(PairFactory.createPair(this, 1, "01", "sad"));
-        newPairs.add(PairFactory.createPair(this, 2, "02", "son"));
-        newPairs.add(PairFactory.createPair(this, 3, "03", "SAME"));
-        newPairs.add(PairFactory.createPair(this, 4, "04", "sour"));
-        newPairs.add(PairFactory.createPair(this, 5, "05", "soul"));
-        newPairs.add(PairFactory.createPair(this, 6, "06", "siege"));
-        newPairs.add(PairFactory.createPair(this, 7, "07", "sock"));
-        newPairs.add(PairFactory.createPair(this, 8, "08", "safe"));
-        newPairs.add(PairFactory.createPair(this, 9, "09", "zap"));
+        newPairs.add(PairFactory.createPair(this, 0, "0", "saw"));
+        newPairs.add(PairFactory.createPair(this, 1, "1", "day"));
+        newPairs.add(PairFactory.createPair(this, 2, "2", "Noah"));
+        newPairs.add(PairFactory.createPair(this, 3, "3", "home"));
+        newPairs.add(PairFactory.createPair(this, 4, "04", "ray"));
+        newPairs.add(PairFactory.createPair(this, 5, "5", "law"));
+        newPairs.add(PairFactory.createPair(this, 6, "6", "siege"));
+        newPairs.add(PairFactory.createPair(this, 7, "7", "shoe"));
+        newPairs.add(PairFactory.createPair(this, 8, "8", "UFO"));
+        newPairs.add(PairFactory.createPair(this, 9, "9", "bee"));
         return newPairs;
     }
 
@@ -352,5 +378,11 @@ public class MainActivity extends Activity
         {
             pair.clearScore();
         }
+        Toast.makeText(this, "Score reset.", Toast.LENGTH_LONG).show();
+    }
+
+    private void clearEntries()
+    {
+        reset(null);
     }
 }
