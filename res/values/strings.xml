@@ -1,16 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Pair Checker</string>
-    <string name="check">Check</string>
-    <string name="next">Next</string>
-    <string name="empty"></string>
+    
     <string name="start">Start</string>
-    <string name="menu_select_file">Select file</string>
+    <string name="check">\?</string>
     <string name="correct">Correct</string>
     <string name="wrong">Wrong</string>
+    <string name="skip">Skip</string>
+    
+    <!--<string name="next">Next</string>-->
+    <string name="empty"></string>
+    <string name="key">Key</string>
+    <string name="value">Value</string>
+    <!-- menu -->
+    <string name="menu_select_file">Select file</string>
     <string name="menu_show_score">Show score</string>
     <string name="menu_clear_score">Clear score</string>
     <string name="menu_clear_entries">Clear items</string>
+    <string name="menu_write_file">Save</string>
     
     <color name="red">#FF0000</color>
     <color name="green">#00FF00</color>

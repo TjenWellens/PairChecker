@@ -13,6 +13,7 @@ public class Pool
     private List<Integer> fullPool;
     private List<Integer> pool;
     private Random random = new Random(System.currentTimeMillis());
+    private Integer currentIndex;
 
     public Pool(List<RatedPairI> pairs)
     {
@@ -25,23 +26,33 @@ public class Pool
         {
             pool = new LinkedList<Integer>(fullPool);
         }
-        Integer ret = pool.get(random.nextInt(pool.size()));
-        return ret;
+        currentIndex = pool.get(random.nextInt(pool.size()));
+        return currentIndex;
     }
 
-    public boolean correct(Integer index)
+    public void correct()
     {
-        return pool.remove(index);
+        pool.remove(currentIndex);
     }
 
-    public boolean wrong(Integer index)
+    public void wrong()
     {
-        return true;
+        // Do nothing
     }
 
-    public boolean check(Integer index)
+    public void check()
     {
-        return true;
+        // Do nothing
+    }
+
+    public void skip()
+    {
+        // Do nothing
+    }
+
+    public void start()
+    {
+        // Do nothing
     }
 
     private List<Integer> initPool(List<RatedPairI> pairs)

@@ -29,6 +29,7 @@ public class PairSet implements PairSetI
     {
         if (state.correct(currentPair))
         {
+            pool.correct();
             next();
             return true;
         }
@@ -39,6 +40,7 @@ public class PairSet implements PairSetI
     {
         if (state.wrong(currentPair))
         {
+            pool.wrong();
             next();
             return true;
         }
@@ -49,6 +51,7 @@ public class PairSet implements PairSetI
     {
         if (state.skip(currentPair))
         {
+            pool.skip();
             next();
             return true;
         }
@@ -59,6 +62,7 @@ public class PairSet implements PairSetI
     {
         if (state.start())
         {
+            pool.start();
             next();
             return true;
         }

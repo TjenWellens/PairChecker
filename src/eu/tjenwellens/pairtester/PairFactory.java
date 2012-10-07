@@ -8,14 +8,14 @@ import android.content.Context;
  */
 public class PairFactory
 {
-    public static RatedPairI loadPair(Context context, int db_id, String db_key, String db_value, int db_corrects, int db_wrongs, int db_last_try)
+    public static RatedPairI loadPair(Context context, int id, String key, String value, int corrects, int wrongs, int last_try)
     {
-        return new RatedPair(db_id, db_key, db_value, db_corrects, db_wrongs, db_last_try);
+        return new RatedPair(id, key, value, corrects, wrongs, last_try);
     }
 
-    public static RatedPairI createPair(Context context, int db_id, String db_key, String db_value)
+    public static RatedPairI createPair(Context context, int id, String key, String value)
     {
-        return new RatedPair(db_id, db_key, db_value);
+        return new RatedPair(id, key, value);
     }
 
     private static class RatedPair extends Pair implements RatedPairI
@@ -34,6 +34,12 @@ public class PairFactory
             this.corrects = corrects;
             this.wrongs = wrongs;
             this.lastTry = lastTry;
+        }
+
+        @Override
+        public String toString()
+        {
+            return super.toString() + ";" + corrects + ";" + wrongs + ";" + lastTry;
         }
 
         public int getCorrects()
@@ -86,6 +92,12 @@ public class PairFactory
             this.id = id;
             this.key = key;
             this.value = value;
+        }
+
+        @Override
+        public String toString()
+        {
+            return "" + key + "=" + value;
         }
 
         public int getId()
