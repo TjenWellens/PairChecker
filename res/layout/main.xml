@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="vertical"
               android:layout_width="fill_parent"
@@ -12,7 +12,7 @@
             android:orientation="vertical"
             android:layout_width="0dip"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight=".66"
             android:gravity="top" >
             <TextView  
                 android:layout_width="fill_parent" 
@@ -31,9 +31,11 @@
         </LinearLayout>
         <Button
             android:id="@+id/btnCheck"
-            android:layout_width="wrap_content"
+            android:layout_width="0dip"
             android:layout_height="fill_parent"
             android:onClick="btnCheck"
+            android:layout_weight=".33"
+            style="@style/btn_check"
             android:text="@string/check" />
         <!--android:background="@drawable/check"-->
     </LinearLayout>
@@ -44,34 +46,37 @@
         <Button
             android:id="@+id/btnWrong"
             android:layout_width="0dip"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:layout_weight=".33"
             android:onClick="btnWrong"
+            style="@style/btn_wrong"
             android:text="@string/wrong" />
         <!--android:background="@drawable/wrong"-->
         <Button
             android:id="@+id/btnCorrect"
             android:layout_width="0dip"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
+            android:layout_weight=".33"
+            android:layout_height="match_parent"
             android:onClick="btnCorrect"
+            style="@style/btn_correct"
             android:text="@string/correct" />
         <!--android:background="@drawable/correct"-->
         <Button
             android:id="@+id/btnSkip"
             android:layout_width="0dip"
-            android:layout_weight="1"
+            android:layout_weight=".33"
             android:layout_height="match_parent"
             android:onClick="btnSkip"
+            style="@style/btn_skip"
             android:text="@string/skip" />
         <!--android:background="@drawable/skip"-->
     </LinearLayout>
-    <Button
-        android:id="@+id/btnStart"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="btnStart"
-        android:text="@string/start" />
+    <!--    <Button
+    android:id="@+id/btnStart"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:onClick="btnStart"
+    android:text="@string/start" />-->
     
 </LinearLayout>
 

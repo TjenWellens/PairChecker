@@ -17,6 +17,7 @@ public class PairSet implements PairSetI
     private Pool pool;
     //
     private State state;
+    private RatedPairI previousPair;
 
     public PairSet(List<RatedPairI> pairs)
     {
@@ -71,10 +72,10 @@ public class PairSet implements PairSetI
 
     private void next()
     {
+        previousPair = currentPair;
         currentPair = getNextPair();
         state = StateType.UNCHECKED;
     }
-
 
     private RatedPairI getNextPair()
     {
@@ -83,7 +84,8 @@ public class PairSet implements PairSetI
 
     public boolean check()
     {
-        if(state.check()){
+        if (state.check())
+        {
             state = StateType.CHECKED;
             return true;
         }
@@ -130,5 +132,15 @@ public class PairSet implements PairSetI
     public String getCurrentValue()
     {
         return currentPair.getValue();
+    }
+
+    public RatedPairI getPreviousPair()
+    {
+        return previousPair;
+    }
+
+    public long getStartTime()
+    {
+        return pool.getStartTime();
     }
 }

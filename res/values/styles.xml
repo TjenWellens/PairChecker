@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <style name="btn_check" parent="@android:style/Widget.Button">
+        <item name="android:background">@drawable/btn_check</item>
+    </style>
+    <style name="btn_correct" parent="@android:style/Widget.Button">
+        <item name="android:background">@drawable/btn_correct</item>
+    </style>
+    <style name="btn_skip" parent="@android:style/Widget.Button">
+        <item name="android:background">@drawable/btn_skip</item>
+    </style>
+    <style name="btn_start" parent="@android:style/Widget.Button">
+        <item name="android:background">@drawable/btn_start</item>
+    </style>
+    <style name="btn_wrong" parent="@android:style/Widget.Button">
+        <item name="android:background">@drawable/btn_wrong</item>
+    </style>
+</resources>

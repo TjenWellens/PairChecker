@@ -23,12 +23,13 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class MainActivity extends Activity
 {
     //new
-    PairSet pairset;
+    private PairSet pairset;
     //In an Activity
     private String SPLITTER = "=";
     private String[] mFileList;
@@ -43,7 +44,7 @@ public class MainActivity extends Activity
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
+//        setContentView(R.layout.start);
         loadFileList();
         reset(loadState());
     }
@@ -182,18 +183,21 @@ public class MainActivity extends Activity
             newPairs = initPairs();
         }
         pairset = new PairSet(newPairs);
-        resetGUI();
-        newState();
+        startGUI();
         Toast.makeText(this, "" + newPairs.size() + " items loaded", Toast.LENGTH_LONG).show();
     }
 
-    private void resetGUI()
+    private void mainGUI()
     {
         setContentView(R.layout.main);
         final TextView tvKey = (TextView) findViewById(R.id.txtKey);
         final TextView tvValue = (TextView) findViewById(R.id.txtValue);
-        tvKey.setText(R.string.empty);
-        tvValue.setText(R.string.empty);
+        if (tvKey != null && tvValue != null)
+        {
+            tvKey.setText(R.string.empty);
+            tvValue.setText(R.string.empty);
+            newButtonState();
+        }
     }
 
     public void btnCorrect(View button)
@@ -244,11 +248,22 @@ public class MainActivity extends Activity
     {
         if (pairset.start())
         {
-            next();
+            start();
         } else
         {
             Toast.makeText(this, "You can't do that", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void start()
+    {
+        mainGUI();
+        next();
+    }
+
+    private void startGUI()
+    {
+        setContentView(R.layout.start);
     }
 
     private void check()
@@ -261,6 +276,7 @@ public class MainActivity extends Activity
     {
         showKey(pairset.getCurrentKey());
         uncheckedState();
+        log(pairset);
     }
 
     private void uncheckedState()
@@ -269,12 +285,12 @@ public class MainActivity extends Activity
         final Button btnWrong = (Button) findViewById(R.id.btnWrong);
         final Button btnCorrect = (Button) findViewById(R.id.btnCorrect);
         final Button btnSkip = (Button) findViewById(R.id.btnSkip);
-        final Button btnStart = (Button) findViewById(R.id.btnStart);
+//        final Button btnStart = (Button) findViewById(R.id.btnStart);
         btnCheck.setEnabled(true);
         btnWrong.setEnabled(false);
         btnCorrect.setEnabled(false);
         btnSkip.setEnabled(false);
-        btnStart.setEnabled(false);
+//        btnStart.setEnabled(false);
     }
 
     private void checkedState()
@@ -283,26 +299,26 @@ public class MainActivity extends Activity
         final Button btnWrong = (Button) findViewById(R.id.btnWrong);
         final Button btnCorrect = (Button) findViewById(R.id.btnCorrect);
         final Button btnSkip = (Button) findViewById(R.id.btnSkip);
-        final Button btnStart = (Button) findViewById(R.id.btnStart);
+//        final Button btnStart = (Button) findViewById(R.id.btnStart);
         btnCheck.setEnabled(false);
         btnWrong.setEnabled(true);
         btnCorrect.setEnabled(true);
         btnSkip.setEnabled(true);
-        btnStart.setEnabled(false);
+//        btnStart.setEnabled(false);
     }
 
-    private void newState()
+    private void newButtonState()
     {
         final Button btnCheck = (Button) findViewById(R.id.btnCheck);
         final Button btnWrong = (Button) findViewById(R.id.btnWrong);
         final Button btnCorrect = (Button) findViewById(R.id.btnCorrect);
         final Button btnSkip = (Button) findViewById(R.id.btnSkip);
-        final Button btnStart = (Button) findViewById(R.id.btnStart);
+//        final Button btnStart = (Button) findViewById(R.id.btnStart);
         btnCheck.setEnabled(false);
         btnWrong.setEnabled(false);
         btnCorrect.setEnabled(false);
         btnSkip.setEnabled(false);
-        btnStart.setEnabled(true);
+//        btnStart.setEnabled(true);
     }
 
     private void showValue()
@@ -379,6 +395,39 @@ public class MainActivity extends Activity
         {
             Toast.makeText(getBaseContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void log(PairSet pairset)
+    {
+        RatedPairI pair = pairset.getPreviousPair();
+        if (pair == null)
+        {
+            long startTime = pairset.getStartTime();
+            Date date = new Date(startTime);
+            date.getDay();
+            String key = "NEW SESSION: "
+                    + date.getDay() + "/" + date.getMonth() + "/" + date.getYear() + " "
+                    + date.getHours() + ":" + date.getMinutes();
+            String value = "" + pairset.getStartTime();
+            pair = PairFactory.createPair(this, -1, key, value);
+        }
+        String fileName = "log.txt";
+        String path = Environment.getExternalStorageDirectory().getPath() + "//PairTester//" + fileName;
+
+        try
+        {
+            File myFile = new File(path);
+            myFile.createNewFile();
+            FileWriter filewriter = new FileWriter(myFile, true);
+            BufferedWriter out = new BufferedWriter(filewriter);
+            out.write(pair.toString() + "\n");
+            out.close();
+//            Toast.makeText(getBaseContext(), "Done writing to SD.", Toast.LENGTH_SHORT).show();
+        } catch (Exception e)
+        {
+            Toast.makeText(getBaseContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+
     }
 
     private List<RatedPairI> read(String path)

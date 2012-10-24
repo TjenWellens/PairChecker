@@ -10,9 +10,10 @@ import java.util.Random;
  */
 public class Pool
 {
+    private final long startTime = System.currentTimeMillis();
     private List<Integer> fullPool;
     private List<Integer> pool;
-    private Random random = new Random(System.currentTimeMillis());
+    private Random random = new Random(startTime);
     private Integer currentIndex;
 
     public Pool(List<RatedPairI> pairs)
@@ -63,5 +64,10 @@ public class Pool
             ret.add(i);
         }
         return ret;
+    }
+
+    public long getStartTime()
+    {
+        return startTime;
     }
 }
