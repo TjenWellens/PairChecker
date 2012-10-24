@@ -70,4 +70,14 @@ public class Pool
     {
         return startTime;
     }
+
+    public int getSize()
+    {
+        return pool.size();
+    }
+
+    public int getOriginalSize()
+    {
+        return fullPool.size();
+    }
 }

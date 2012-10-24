@@ -143,4 +143,14 @@ public class PairSet implements PairSetI
     {
         return pool.getStartTime();
     }
+
+    public int getSize()
+    {
+        return pool.getSize();
+    }
+
+    public int getOriginalSize()
+    {
+        return pool.getOriginalSize();
+    }
 }
