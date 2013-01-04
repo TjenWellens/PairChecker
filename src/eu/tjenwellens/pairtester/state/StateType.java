@@ -1,7 +1,5 @@
 package eu.tjenwellens.pairtester.state;
 
-import eu.tjenwellens.pairtester.RatedPairI;
-
 /**
  *
  * @author Tjen
@@ -16,19 +14,19 @@ public enum StateType implements State
         this.state = state;
     }
 
-    public boolean correct(RatedPairI pair)
+    public boolean correct()
     {
-        return state.correct(pair);
+        return state.correct();
     }
 
-    public boolean wrong(RatedPairI pair)
+    public boolean wrong()
     {
-        return state.wrong(pair);
+        return state.wrong();
     }
 
-    public boolean skip(RatedPairI pair)
+    public boolean skip()
     {
-        return state.skip(pair);
+        return state.skip();
     }
 
     public boolean check()
@@ -43,17 +41,17 @@ public enum StateType implements State
 
     private static class NewState implements State
     {
-        public boolean correct(RatedPairI pair)
+        public boolean correct()
         {
             return false;
         }
 
-        public boolean wrong(RatedPairI pair)
+        public boolean wrong()
         {
             return false;
         }
 
-        public boolean skip(RatedPairI pair)
+        public boolean skip()
         {
             return false;
         }
@@ -71,17 +69,17 @@ public enum StateType implements State
 
     private static class UncheckedState implements State
     {
-        public boolean correct(RatedPairI pair)
+        public boolean correct()
         {
             return false;
         }
 
-        public boolean wrong(RatedPairI pair)
+        public boolean wrong()
         {
             return false;
         }
 
-        public boolean skip(RatedPairI pair)
+        public boolean skip()
         {
             return false;
         }
@@ -99,21 +97,18 @@ public enum StateType implements State
 
     private static class CheckedState implements State
     {
-        public boolean correct(RatedPairI pair)
+        public boolean correct()
         {
-            pair.correct();
             return true;
         }
 
-        public boolean wrong(RatedPairI pair)
+        public boolean wrong()
         {
-            pair.wrong();
             return true;
         }
 
-        public boolean skip(RatedPairI pair)
+        public boolean skip()
         {
-            pair.skip();
             return true;
         }
 

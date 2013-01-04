@@ -1,6 +1,7 @@
-package eu.tjenwellens.pairtester;
+package eu.tjenwellens.pairtester.old;
 
-import java.util.List;
+import eu.tjenwellens.pairtester.pairs.RatedPair;
+import java.util.Collection;
 
 /**
  *
@@ -15,20 +16,22 @@ public interface PairSetI
     boolean skip();
 
     boolean check();
-    
+
     boolean start();
 
 //    void load();
-
     int getScore();
 
     void resetScore();
 
 //    void clearEntries();
-    
-    List<RatedPairI> getPairs();
-    
+    Collection<? extends RatedPair> getPairs();
+
     String getCurrentKey();
-    
+
     String getCurrentValue();
+
+    int getCurrentSize();
+
+    int getOriginalSize();
 }

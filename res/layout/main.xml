@@ -24,14 +24,14 @@
             <TextView  
                 android:layout_width="fill_parent" 
                 android:layout_height="wrap_content" 
-                android:text="@string/key"
+                android:text="@string/empty"
                 android:id="@+id/txtKey"
                 android:textSize="30dp"
             />
             <TextView  
                 android:layout_width="fill_parent" 
                 android:layout_height="wrap_content" 
-                android:text="@string/value"
+                android:text="@string/empty"
                 android:id="@+id/txtValue"
                 android:textSize="30dp"
             />

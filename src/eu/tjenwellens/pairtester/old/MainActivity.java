@@ -1,5 +1,6 @@
-package eu.tjenwellens.pairtester;
+package eu.tjenwellens.pairtester.old;
 
+import eu.tjenwellens.pairtester.ReadWrite;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
@@ -14,14 +15,14 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-import java.io.BufferedReader;
+import eu.tjenwellens.pairtester.R;
+import eu.tjenwellens.pairtester.database.DatabaseHandler;
+import eu.tjenwellens.pairtester.pairs.PairFactory;
+import eu.tjenwellens.pairtester.pairs.RatedPair;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -29,7 +30,7 @@ import java.util.List;
 public class MainActivity extends Activity
 {
     //new
-    private PairSet pairset;
+    private PairSetI pairset;
     //In an Activity
     private String SPLITTER = "=";
     private String[] mFileList;
@@ -53,7 +54,7 @@ public class MainActivity extends Activity
     protected void onDestroy()
     {
         super.onDestroy();
-        saveState(pairset.getPairs());
+        saveState(new ArrayList<RatedPair>(pairset.getPairs()));
     }
 
     @Override
@@ -89,7 +90,7 @@ public class MainActivity extends Activity
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
     {
-        getMenuInflater().inflate(R.menu.menu, menu);
+        getMenuInflater().inflate(R.menu.main_menu, menu);
         return true;
     }
 
@@ -99,33 +100,33 @@ public class MainActivity extends Activity
     {
         switch (item.getItemId())
         {
-            // We have only one menu option
-            case R.id.menu_select_file:
-                onCreateDialog(DIALOG_LOAD_FILE);
-                break;
-            case R.id.menu_show_score:
-                showScore();
-                break;
-            case R.id.menu_clear_score:
-                clearScore();
-                break;
-            case R.id.menu_clear_entries:
-                clearEntries();
-                break;
-            case R.id.menu_write_file:
-                writeFile();
-                break;
+//            // We have only one menu option
+//            case R.id.menu_select_file:
+//                onCreateDialog(DIALOG_LOAD_FILE);
+//                break;
+//            case R.id.menu_show_score:
+//                showScore();
+//                break;
+//            case R.id.menu_clear_score:
+//                clearScore();
+//                break;
+//            case R.id.menu_clear_entries:
+//                clearEntries();
+//                break;
+//            case R.id.menu_write_file:
+//                writeFile();
+//                break;
         }
         return true;
     }
 
-    private List<RatedPairI> loadState()
+    private List<RatedPair> loadState()
     {
         Toast.makeText(this, "loading", Toast.LENGTH_SHORT).show();
         return DatabaseHandler.getInstance(this).getAllPairs();
     }
 
-    private void saveState(List<RatedPairI> savePairs)
+    private void saveState(List<RatedPair> savePairs)
     {
         DatabaseHandler dbh = DatabaseHandler.getInstance(this);
         dbh.clearPairs();
@@ -168,7 +169,7 @@ public class MainActivity extends Activity
         {
             return;
         }
-        List<RatedPairI> newPairs = read(Environment.getExternalStorageDirectory().getPath() + "//PairTester//" + fileName);
+        List<RatedPair> newPairs = ReadWrite.readRatedPairs(this, Environment.getExternalStorageDirectory().getPath() + "//PairTester//" + fileName, SPLITTER);
         if (newPairs.isEmpty())
         {
             return;
@@ -176,7 +177,7 @@ public class MainActivity extends Activity
         reset(newPairs);
     }
 
-    private void reset(List<RatedPairI> newPairs)
+    private void reset(List<RatedPair> newPairs)
     {
         if (newPairs == null || newPairs.isEmpty())
         {
@@ -203,7 +204,7 @@ public class MainActivity extends Activity
 
     private String progress()
     {
-        return pairset.getSize() + "/" + pairset.getOriginalSize();
+        return pairset.getCurrentSize() + "/" + pairset.getOriginalSize();
     }
 
     public void btnCorrect(View button)
@@ -282,7 +283,7 @@ public class MainActivity extends Activity
     {
         showKey(pairset.getCurrentKey());
         uncheckedState();
-        log(pairset);
+        log((PairSet) pairset);
     }
 
     private void uncheckedState()
@@ -343,9 +344,9 @@ public class MainActivity extends Activity
         tvProgress.setText("" + progress());
     }
 
-    private List<RatedPairI> initPairs()
+    private List<RatedPair> initPairs()
     {
-        List<RatedPairI> newPairs = new ArrayList<RatedPairI>();
+        List<RatedPair> newPairs = new ArrayList<RatedPair>();
         newPairs.add(PairFactory.createPair(this, 0, "0", "saw"));
         newPairs.add(PairFactory.createPair(this, 1, "1", "day"));
         newPairs.add(PairFactory.createPair(this, 2, "2", "Noah"));
@@ -393,7 +394,7 @@ public class MainActivity extends Activity
             myFile.createNewFile();
             FileWriter filewriter = new FileWriter(myFile);
             BufferedWriter out = new BufferedWriter(filewriter);
-            for (RatedPairI pair : pairset.getPairs())
+            for (RatedPair pair : pairset.getPairs())
             {
                 out.write(pair.toString() + "\n");
             }
@@ -407,16 +408,16 @@ public class MainActivity extends Activity
 
     private void log(PairSet pairset)
     {
-        RatedPairI pair = pairset.getPreviousPair();
+        RatedPair pair = pairset.getPreviousPair();
         if (pair == null)
         {
-            long startTime = pairset.getStartTime();
-            Date date = new Date(startTime);
+            long time = System.currentTimeMillis();
+            Date date = new Date(time);
             date.getDay();
             String key = "NEW SESSION: "
                     + date.getDay() + "/" + date.getMonth() + "/" + date.getYear() + " "
                     + date.getHours() + ":" + date.getMinutes();
-            String value = "" + pairset.getStartTime();
+            String value = "" + time;
             pair = PairFactory.createPair(this, -1, key, value);
         }
         String fileName = "log.txt";
@@ -436,51 +437,5 @@ public class MainActivity extends Activity
             Toast.makeText(getBaseContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
         }
 
-    }
-
-    private List<RatedPairI> read(String path)
-    {
-        List<RatedPairI> newPairs = new ArrayList<RatedPairI>();
-        try
-        {
-            File myFile = new File(path);
-            FileInputStream fIn;
-            fIn = new FileInputStream(myFile);
-            BufferedReader myReader = new BufferedReader(new InputStreamReader(fIn));
-            String line;
-            int counter = 0;
-            while ((line = myReader.readLine()) != null)
-            {
-                if (line.startsWith("#"))
-                {
-                    continue;
-                }
-                String[] key_value = line.split(SPLITTER, 2);
-                if (key_value.length == 2)
-                {
-                    String key = key_value[0];
-                    String value = key_value[1];
-                    String[] value_corrects_wrongs_lastTry = value.split(";");
-                    if (value_corrects_wrongs_lastTry.length == 4)
-                    {
-                        value = value_corrects_wrongs_lastTry[0];
-                        int corrects = Integer.parseInt(value_corrects_wrongs_lastTry[1]);
-                        int wrongs = Integer.parseInt(value_corrects_wrongs_lastTry[2]);
-                        int lastTry = Integer.parseInt(value_corrects_wrongs_lastTry[3]);
-                        newPairs.add(PairFactory.loadPair(this, counter, key, value, corrects, wrongs, lastTry));
-                    } else
-                    {
-                        newPairs.add(PairFactory.createPair(this, counter, key_value[0], key_value[1]));
-                    }
-                    counter++;
-                }
-            }
-            myReader.close();
-            Toast.makeText(getBaseContext(), "New entries read: " + counter, Toast.LENGTH_SHORT).show();
-        } catch (IOException e)
-        {
-            Toast.makeText(getBaseContext(), "Error reading file", Toast.LENGTH_SHORT).show();
-        }
-        return newPairs;
     }
 }

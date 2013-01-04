@@ -1,83 +1,26 @@
 package eu.tjenwellens.pairtester;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
-
 /**
  *
  * @author Tjen
  */
-public class Pool
+public interface Pool
 {
-    private final long startTime = System.currentTimeMillis();
-    private List<Integer> fullPool;
-    private List<Integer> pool;
-    private Random random = new Random(startTime);
-    private Integer currentIndex;
+    int getNextIndex();
 
-    public Pool(List<RatedPairI> pairs)
-    {
-        this.fullPool = initPool(pairs);
-    }
+    boolean removeIndex(Integer index);
 
-    public int getRandomIndex()
-    {
-        if (pool == null || pool.isEmpty())
-        {
-            pool = new LinkedList<Integer>(fullPool);
-        }
-        currentIndex = pool.get(random.nextInt(pool.size()));
-        return currentIndex;
-    }
+    void correct();
 
-    public void correct()
-    {
-        pool.remove(currentIndex);
-    }
+    void wrong();
 
-    public void wrong()
-    {
-        // Do nothing
-    }
+    void check();
 
-    public void check()
-    {
-        // Do nothing
-    }
+    void skip();
 
-    public void skip()
-    {
-        // Do nothing
-    }
+    void start();
 
-    public void start()
-    {
-        // Do nothing
-    }
+    int getSize();
 
-    private List<Integer> initPool(List<RatedPairI> pairs)
-    {
-        List<Integer> ret = new LinkedList<Integer>();
-        for (int i = 0; i < pairs.size(); i++)
-        {
-            ret.add(i);
-        }
-        return ret;
-    }
-
-    public long getStartTime()
-    {
-        return startTime;
-    }
-
-    public int getSize()
-    {
-        return pool.size();
-    }
-
-    public int getOriginalSize()
-    {
-        return fullPool.size();
-    }
+    int getOriginalSize();
 }

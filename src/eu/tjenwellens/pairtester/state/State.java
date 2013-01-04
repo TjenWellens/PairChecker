@@ -1,18 +1,16 @@
 package eu.tjenwellens.pairtester.state;
 
-import eu.tjenwellens.pairtester.RatedPairI;
-
 /**
  *
  * @author Tjen
  */
 public interface State
 {
-    boolean correct(RatedPairI pair);
+    boolean correct();
 
-    boolean wrong(RatedPairI pair);
+    boolean wrong();
 
-    boolean skip(RatedPairI pair);
+    boolean skip();
 
     boolean check();
 

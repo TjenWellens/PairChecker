@@ -1,5 +1,7 @@
-package eu.tjenwellens.pairtester;
+package eu.tjenwellens.pairtester.database;
 
+import eu.tjenwellens.pairtester.pairs.PairFactory;
+import eu.tjenwellens.pairtester.pairs.RatedPair;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -25,7 +27,7 @@ public class DatabaseHandler extends SQLiteOpenHelper
     private static final String KEY_VALUE = "value";
     private static final String KEY_CORRECTS = "corrects";
     private static final String KEY_WRONGS = "wrongs";
-    private static final String KEY_LAST_TRY_CORRECT = "last_try_correct";
+    private static final String KEY_SKIPS = "last_try_correct";
     // Create table
     private static final String CREATE_PAIRS_TABLE = "CREATE TABLE " + TABLE_PAIRS + "("
             + KEY_ID + " INTEGER PRIMARY KEY,"
@@ -34,7 +36,7 @@ public class DatabaseHandler extends SQLiteOpenHelper
             + KEY_CORRECTS + " INTEGER,"
             + KEY_WRONGS + " INTEGER,"
             // mind the , before the )
-            + KEY_LAST_TRY_CORRECT + " TEXT"
+            + KEY_SKIPS + " TEXT"
             + ")";
     private Context context;
 
@@ -75,32 +77,32 @@ public class DatabaseHandler extends SQLiteOpenHelper
      * All CRUD(Create, Read, Update, Delete) Operations
      */
     // Adding new contact
-    public void addPair(RatedPairI pair)
+    public void addPair(RatedPair pair)
     {
         SQLiteDatabase db = this.getWritableDatabase();
         addPairWithoutClosing(db, pair);
         db.close(); // Closing database connection
     }
 
-    private void addPairWithoutClosing(SQLiteDatabase db, RatedPairI pair)
+    private void addPairWithoutClosing(SQLiteDatabase db, RatedPair pair)
     {
         ContentValues values = new ContentValues();
-        values.put(KEY_ID, pair.getId());        // id
+        values.put(KEY_ID, pair.getPairId());        // id
         values.put(KEY_KEY, pair.getKey()); // kalender
         values.put(KEY_VALUE, pair.getValue());        // title
         values.put(KEY_CORRECTS, pair.getCorrects()); // begin
         values.put(KEY_WRONGS, pair.getWrongs()); // end
-        values.put(KEY_LAST_TRY_CORRECT, pair.getLastTry()); // description
+        values.put(KEY_SKIPS, pair.getSkips()); // description
 
         // Inserting Row
         db.insert(TABLE_PAIRS, null, values);
     }
 
-    public int addAllPairs(List<RatedPairI> pairs)
+    public int addAllPairs(List<RatedPair> pairs)
     {
         SQLiteDatabase db = this.getWritableDatabase();
         int counter = 0;
-        for (RatedPairI pair : pairs)
+        for (RatedPair pair : pairs)
         {
             addPairWithoutClosing(db, pair);
             counter++;
@@ -110,14 +112,14 @@ public class DatabaseHandler extends SQLiteOpenHelper
     }
 
     // Getting single contact
-    public RatedPairI getPair(int id)
+    public RatedPair getPair(int id)
     {
         SQLiteDatabase db = this.getReadableDatabase();
 
         String table = TABLE_PAIRS;
         String[] columns = new String[]
         {
-            KEY_ID, KEY_KEY, KEY_VALUE, KEY_CORRECTS, KEY_WRONGS, KEY_LAST_TRY_CORRECT
+            KEY_ID, KEY_KEY, KEY_VALUE, KEY_CORRECTS, KEY_WRONGS, KEY_SKIPS
         };
         String selection = KEY_ID + "=?";
         String[] selectionArgs = new String[]
@@ -143,15 +145,15 @@ public class DatabaseHandler extends SQLiteOpenHelper
         cursor.close();
         db.close();
 
-        RatedPairI pair = PairFactory.loadPair(context, db_id, db_key, db_value, db_corrects, db_wrongs, db_last_try);
+        RatedPair pair = PairFactory.loadPair(context, db_id, db_key, db_value, db_corrects, db_wrongs, db_last_try);
         // return contact
         return pair;
     }
 
     // Getting All Contacts
-    public List<RatedPairI> getAllPairs()
+    public List<RatedPair> getAllPairs()
     {
-        List<RatedPairI> contactList = new ArrayList<RatedPairI>();
+        List<RatedPair> contactList = new ArrayList<RatedPair>();
         // Select All Query
         String selectQuery = "SELECT  * FROM " + TABLE_PAIRS;
 
@@ -170,7 +172,7 @@ public class DatabaseHandler extends SQLiteOpenHelper
                 int db_wrongs = Integer.parseInt(cursor.getString(4));
                 int db_last_try = Integer.parseInt(cursor.getString(4));
 
-                RatedPairI pair = PairFactory.loadPair(context, db_id, db_key, db_value, db_corrects, db_wrongs, db_last_try);
+                RatedPair pair = PairFactory.loadPair(context, db_id, db_key, db_value, db_corrects, db_wrongs, db_last_try);
                 // Adding contact to list
                 contactList.add(pair);
             } while (cursor.moveToNext());
@@ -183,21 +185,21 @@ public class DatabaseHandler extends SQLiteOpenHelper
     }
 
     // Updating single contact
-    public int updatePair(RatedPairI pair)
+    public int updatePair(RatedPair pair)
     {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(KEY_ID, pair.getId());        // id
+        values.put(KEY_ID, pair.getPairId());        // id
         values.put(KEY_KEY, pair.getKey()); // kalender
         values.put(KEY_VALUE, pair.getValue());        // title
         values.put(KEY_CORRECTS, pair.getCorrects()); // begin
         values.put(KEY_WRONGS, pair.getWrongs()); // end
-        values.put(KEY_LAST_TRY_CORRECT, pair.getLastTry()); // description
+        values.put(KEY_SKIPS, pair.getSkips()); // description
         int result = db.update(TABLE_PAIRS, values, KEY_ID + " = ?",
                 new String[]
                 {
-                    String.valueOf(pair.getId())
+                    String.valueOf(pair.getPairId())
                 });
         db.close();
         // updating row
@@ -205,13 +207,13 @@ public class DatabaseHandler extends SQLiteOpenHelper
     }
 
     // Deleting single contact
-    public void deletePair(RatedPairI pair)
+    public void deletePair(RatedPair pair)
     {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_PAIRS, KEY_ID + " = ?",
                 new String[]
                 {
-                    String.valueOf(pair.getId())
+                    String.valueOf(pair.getPairId())
                 });
         db.close();
     }

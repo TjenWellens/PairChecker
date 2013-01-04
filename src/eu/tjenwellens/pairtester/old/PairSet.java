@@ -1,7 +1,12 @@
-package eu.tjenwellens.pairtester;
+package eu.tjenwellens.pairtester.old;
 
+import eu.tjenwellens.pairtester.pairs.RatedPair;
+import eu.tjenwellens.pairtester.Pool;
+import eu.tjenwellens.pairtester.RandomPoolCorrectOnly;
 import eu.tjenwellens.pairtester.state.State;
 import eu.tjenwellens.pairtester.state.StateType;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -11,25 +16,26 @@ import java.util.List;
 public class PairSet implements PairSetI
 {
     /* contains all the key-value pairs */
-    private List<RatedPairI> pairs;
-    private RatedPairI currentPair;
+    private List<RatedPair> pairs;
+    private RatedPair currentPair;
     // randomize
     private Pool pool;
     //
     private State state;
-    private RatedPairI previousPair;
+    private RatedPair previousPair;
 
-    public PairSet(List<RatedPairI> pairs)
+    public PairSet(Collection<RatedPair> pairs)
     {
-        this.pairs = pairs;
-        this.pool = new Pool(pairs);
+        this.pairs = new ArrayList<RatedPair>(pairs);
+        this.pool = new RandomPoolCorrectOnly(pairs);
         this.state = StateType.NEW;
     }
 
     public boolean correct()
     {
-        if (state.correct(currentPair))
+        if (state.correct())
         {
+            currentPair.correct();
             pool.correct();
             next();
             return true;
@@ -39,8 +45,9 @@ public class PairSet implements PairSetI
 
     public boolean wrong()
     {
-        if (state.wrong(currentPair))
+        if (state.wrong())
         {
+            currentPair.wrong();
             pool.wrong();
             next();
             return true;
@@ -50,8 +57,9 @@ public class PairSet implements PairSetI
 
     public boolean skip()
     {
-        if (state.skip(currentPair))
+        if (state.skip())
         {
+            currentPair.skip();
             pool.skip();
             next();
             return true;
@@ -77,9 +85,9 @@ public class PairSet implements PairSetI
         state = StateType.UNCHECKED;
     }
 
-    private RatedPairI getNextPair()
+    private RatedPair getNextPair()
     {
-        return pairs.get(pool.getRandomIndex());
+        return pairs.get(pool.getNextIndex());
     }
 
     public boolean check()
@@ -95,7 +103,7 @@ public class PairSet implements PairSetI
     public int getScore()
     {
         int score, total, corrects = 0, wrongs = 0;
-        for (RatedPairI pair : pairs)
+        for (RatedPair pair : pairs)
         {
             corrects += pair.getCorrects();
             wrongs += pair.getWrongs();
@@ -113,13 +121,13 @@ public class PairSet implements PairSetI
 
     public void resetScore()
     {
-        for (RatedPairI pair : pairs)
+        for (RatedPair pair : pairs)
         {
-            pair.clearScore();
+            pair.resetScore();
         }
     }
 
-    public List<RatedPairI> getPairs()
+    public List<RatedPair> getPairs()
     {
         return pairs;
     }
@@ -134,17 +142,12 @@ public class PairSet implements PairSetI
         return currentPair.getValue();
     }
 
-    public RatedPairI getPreviousPair()
+    public RatedPair getPreviousPair()
     {
         return previousPair;
     }
 
-    public long getStartTime()
-    {
-        return pool.getStartTime();
-    }
-
-    public int getSize()
+    public int getCurrentSize()
     {
         return pool.getSize();
     }

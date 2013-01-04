@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Pair Checker</string>
+    <string name="app_name_main">Pair Checker - Main</string>
+    <string name="app_name_start">Pair Checker - Start</string>
+    <string name="app_name_lists">Pair Checker - Lists</string>
+    <string name="app_name_overview">Pair Checker - List Overview</string>
     
     <string name="start">Start</string>
     <string name="check">\?</string>
@@ -13,11 +17,26 @@
     <string name="key">Key</string>
     <string name="value">Value</string>
     <!-- menu -->
+    <string name="menu_select_list">Select list</string>
     <string name="menu_select_file">Select file</string>
     <string name="menu_show_score">Show score</string>
-    <string name="menu_clear_score">Clear score</string>
     <string name="menu_clear_entries">Clear items</string>
     <string name="menu_write_file">Save</string>
+    
+    <!--Main menu-->
+    <string name="menu_lists">Select list</string>
+    <string name="menu_overview">Overview</string>
+    <string name="menu_clear_score">Clear score</string>
+    <!--Overview menu-->
+    <string name="menu_save">Save</string>
+    <string name="menu_cancel">Cancel</string>
+    <string name="menu_add">Add</string>
+    <!--Lists menu-->
+    <!--<string name="menu_add">Add</string>-->
+    <string name="menu_import">Import</string>
+    <!--context-menu-->
+    <string name="menu_delete">Delete</string>
+    <string name="menu_edit">Edit</string>
     
     <color name="red">#FF0000</color>
     <color name="green">#00FF00</color>
