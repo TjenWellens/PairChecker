@@ -193,7 +193,7 @@ public class MainActivity extends Activity
         setContentView(R.layout.main);
         final TextView tvKey = (TextView) findViewById(R.id.txtKey);
         final TextView tvValue = (TextView) findViewById(R.id.txtValue);
-        final TextView tvProgress = (TextView) findViewById(R.id.txtProgress);
+//        final TextView tvProgress = (TextView) findViewById(R.id.txtProgress);
         if (tvKey != null && tvValue != null)
         {
             tvKey.setText(R.string.empty);
@@ -338,10 +338,10 @@ public class MainActivity extends Activity
     {
         final TextView tvKey = (TextView) findViewById(R.id.txtKey);
         final TextView tvValue = (TextView) findViewById(R.id.txtValue);
-        final TextView tvProgress = (TextView) findViewById(R.id.txtProgress);
+//        final TextView tvProgress = (TextView) findViewById(R.id.txtProgress);
         tvKey.setText(key);
         tvValue.setText(R.string.empty);
-        tvProgress.setText("" + progress());
+//        tvProgress.setText("" + progress());
     }
 
     private List<RatedPair> initPairs()

@@ -107,14 +107,13 @@ public class PairTesterModel
         {
             loadGroups();
         }
-        if (database.removeGroup(group))
-        {
-            groups.remove(group);
-            return true;
-        } else
+        if (groups == null || groups.isEmpty())
         {
             return false;
         }
+        boolean result = database.removeGroup(group);
+        groups.remove(group);
+        return result;
     }
 
     public boolean updatePair(DatabasePair pair)
@@ -161,5 +160,10 @@ public class PairTesterModel
     public void resetScore()
     {
         currentGroup.resetScore();
+    }
+
+    public int getScore()
+    {
+        return currentGroup.getScore();
     }
 }

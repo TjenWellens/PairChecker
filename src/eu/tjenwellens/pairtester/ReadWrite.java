@@ -111,10 +111,11 @@ public class ReadWrite
                 }
             }
             myReader.close();
-            Toast.makeText(context.getBaseContext(), "New entries read: " + counter, Toast.LENGTH_SHORT).show();
+//            Toast.makeText(context.getBaseContext(), "New entries read: " + counter, Toast.LENGTH_SHORT).show();
         } catch (IOException e)
         {
-            Toast.makeText(context.getBaseContext(), "Error reading file", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(context.getBaseContext(), "Error reading file", Toast.LENGTH_SHORT).show();
+            newPairs = null;
         }
         return newPairs;
     }

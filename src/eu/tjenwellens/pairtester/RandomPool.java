@@ -19,7 +19,8 @@ public abstract class RandomPool implements Pool
 
     public RandomPool(Collection<? extends RatedPair> pairs)
     {
-        this.fullPool = initPool(pairs);
+        this.fullPool = initFullPool(pairs);
+        this.pool = initPool(pairs);
     }
 
     public int getNextIndex()
@@ -28,7 +29,12 @@ public abstract class RandomPool implements Pool
         {
             pool = new LinkedList<Integer>(fullPool);
         }
-        return currentIndex = pool.get(random.nextInt(pool.size()));
+        if (pool == null || pool.isEmpty())
+        {
+            return 0;
+        }
+        currentIndex = pool.get(random.nextInt(pool.size()));
+        return currentIndex;
     }
 
     public abstract void correct();
@@ -41,7 +47,7 @@ public abstract class RandomPool implements Pool
 
     public abstract void start();
 
-    protected List<Integer> initPool(Collection<? extends RatedPair> pairs)
+    protected List<Integer> initFullPool(Collection<? extends RatedPair> pairs)
     {
         List<Integer> ret = new LinkedList<Integer>();
         for (int i = 0; i < pairs.size(); i++)
@@ -50,10 +56,20 @@ public abstract class RandomPool implements Pool
         }
         return ret;
     }
+    protected List<Integer> initPool(Collection<? extends RatedPair> pairs)
+    {
+        return new LinkedList<Integer>(fullPool);
+    }
 
     protected boolean removeCurrentIndex()
     {
-        return pool.remove(currentIndex);
+        if (currentIndex != null)
+        {
+            return pool.remove(currentIndex);
+        } else
+        {
+            return false;
+        }
     }
 
     public int getSize()

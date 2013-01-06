@@ -2,11 +2,13 @@ package eu.tjenwellens.pairtester.activities;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import eu.tjenwellens.pairtester.PairTesterApplication;
@@ -29,9 +31,20 @@ public class MainActivity extends Activity
         initModel();
         start();
     }
-    
-    private void start(){
-        
+
+    /*
+     * Handles window rotation
+     */
+    @Override
+    public void onConfigurationChanged(Configuration newConfig)
+    {
+        // catch window rotation
+        super.onConfigurationChanged(newConfig);
+    }
+
+    private void start()
+    {
+
         if (model.start())
         {
             next();
@@ -108,12 +121,61 @@ public class MainActivity extends Activity
         uncheckedState();
     }
 
+    private void updateProgress()
+    {
+        final ProgressBar pbProgress = (ProgressBar) findViewById(R.id.pbProgress);
+        pbProgress.setProgress(model.getProgress());
+    }
+
+    private void updateScore()
+    {
+        final TextView tvScore = (TextView) findViewById(R.id.txtScore);
+        int score = model.getScore();
+        String text;
+        if (score < 0)
+        {
+            text = "No score yet";
+        } else
+        {
+            text = "" + score + "%";
+        }
+        tvScore.setText(text);
+    }
+//    private static final int PROGRESS = 0x1;
+//    private ProgressBar mProgress;
+//    private int mProgressStatus = 0;
+//    private Handler mHandler = new Handler();
+//
+//    private void test()
+//    {
+//        mProgress = (ProgressBar) findViewById(R.id.progress_bar);
+//
+//        // Start lengthy operation in a background thread
+//        new Thread(new Runnable()
+//        {
+//            public void run()
+//            {
+//                while (mProgressStatus < 100)
+//                {
+//                    mProgressStatus = doWork();
+//
+//                    // Update the progress bar
+//                    mHandler.post(new Runnable()
+//                    {
+//                        public void run()
+//                        {
+//                            mProgress.setProgress(mProgressStatus);
+//                        }
+//                    });
+//                }
+//            }
+//        }).start();
+//    }
+
     private void showValue()
     {
         final TextView tvValue = (TextView) findViewById(R.id.txtValue);
-        final TextView tvProgress = (TextView) findViewById(R.id.txtProgress);
         tvValue.setText(model.getValue());
-        tvProgress.setText("" + model.getProgress() + "%");
     }
 
     private void showKey()
@@ -122,30 +184,40 @@ public class MainActivity extends Activity
         final TextView tvValue = (TextView) findViewById(R.id.txtValue);
         tvKey.setText(model.getKey());
         tvValue.setText(R.string.empty);
+        updateProgress();
+        updateScore();
     }
 
     private void uncheckedState()
     {
-        final Button btnCheck = (Button) findViewById(R.id.btnCheck);
-        final Button btnWrong = (Button) findViewById(R.id.btnWrong);
-        final Button btnCorrect = (Button) findViewById(R.id.btnCorrect);
-        final Button btnSkip = (Button) findViewById(R.id.btnSkip);
-        btnCheck.setEnabled(true);
-        btnWrong.setEnabled(false);
-        btnCorrect.setEnabled(false);
-        btnSkip.setEnabled(false);
+//        final Button btnCheck = (Button) findViewById(R.id.btnCheck);
+//        final Button btnWrong = (Button) findViewById(R.id.btnWrong);
+//        final Button btnCorrect = (Button) findViewById(R.id.btnCorrect);
+//        final Button btnSkip = (Button) findViewById(R.id.btnSkip);
+//        btnCheck.setEnabled(true);
+//        btnWrong.setEnabled(false);
+//        btnCorrect.setEnabled(false);
+//        btnSkip.setEnabled(false);
+        final LinearLayout pnlCheck = (LinearLayout) findViewById(R.id.pnlButtonsCheck);
+        pnlCheck.setVisibility(View.VISIBLE);
+        final LinearLayout pnlCWS = (LinearLayout) findViewById(R.id.pnlButtonsCWS);
+        pnlCWS.setVisibility(View.GONE);
     }
 
     private void checkedState()
     {
-        final Button btnCheck = (Button) findViewById(R.id.btnCheck);
-        final Button btnWrong = (Button) findViewById(R.id.btnWrong);
-        final Button btnCorrect = (Button) findViewById(R.id.btnCorrect);
-        final Button btnSkip = (Button) findViewById(R.id.btnSkip);
-        btnCheck.setEnabled(false);
-        btnWrong.setEnabled(true);
-        btnCorrect.setEnabled(true);
-        btnSkip.setEnabled(true);
+//        final Button btnCheck = (Button) findViewById(R.id.btnCheck);
+//        final Button btnWrong = (Button) findViewById(R.id.btnWrong);
+//        final Button btnCorrect = (Button) findViewById(R.id.btnCorrect);
+//        final Button btnSkip = (Button) findViewById(R.id.btnSkip);
+//        btnCheck.setEnabled(false);
+//        btnWrong.setEnabled(true);
+//        btnCorrect.setEnabled(true);
+//        btnSkip.setEnabled(true);
+        final LinearLayout pnlCheck = (LinearLayout) findViewById(R.id.pnlButtonsCheck);
+        pnlCheck.setVisibility(View.GONE);
+        final LinearLayout pnlCWS = (LinearLayout) findViewById(R.id.pnlButtonsCWS);
+        pnlCWS.setVisibility(View.VISIBLE);
     }
     // </editor-fold>
 
@@ -194,7 +266,7 @@ public class MainActivity extends Activity
 
     private void launchLists()
     {
-        startActivity(new Intent(this, ListsActivity.class));
+//        startActivity(new Intent(this, ListsActivity.class));
         finish();
     }
 
@@ -212,6 +284,7 @@ public class MainActivity extends Activity
     private void clearScore()
     {
         model.resetScore();
+        updateScore();
     }
     // </editor-fold>
 }

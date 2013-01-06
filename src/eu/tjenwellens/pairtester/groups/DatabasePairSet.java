@@ -1,7 +1,7 @@
 package eu.tjenwellens.pairtester.groups;
 
 import eu.tjenwellens.pairtester.Pool;
-import eu.tjenwellens.pairtester.RandomPoolCorrectOnly;
+import eu.tjenwellens.pairtester.RandomPoolCorrectOnlyLoadState;
 import eu.tjenwellens.pairtester.database.GroupDatabase;
 import eu.tjenwellens.pairtester.database.PairDatabase;
 import eu.tjenwellens.pairtester.pairs.DatabasePair;
@@ -33,7 +33,7 @@ public class DatabasePairSet implements GroupSet
         this.database = database;
         loadPairs();
         this.state = StateType.NEW;
-        pool=new RandomPoolCorrectOnly(pairs);
+        pool = new RandomPoolCorrectOnlyLoadState(pairs);
     }
 
     private void loadPairs()
@@ -55,7 +55,10 @@ public class DatabasePairSet implements GroupSet
     {
         if (state.correct())
         {
-            currentPair.correct();
+            if (currentPair != null)
+            {
+                currentPair.correct();
+            }
             pool.correct();
             next();
             return true;
@@ -67,7 +70,10 @@ public class DatabasePairSet implements GroupSet
     {
         if (state.wrong())
         {
-            currentPair.wrong();
+            if (currentPair != null)
+            {
+                currentPair.wrong();
+            }
             pool.wrong();
             next();
             return true;
@@ -79,7 +85,10 @@ public class DatabasePairSet implements GroupSet
     {
         if (state.skip())
         {
-            currentPair.skip();
+            if (currentPair != null)
+            {
+                currentPair.skip();
+            }
             pool.skip();
             next();
             return true;
@@ -115,12 +124,19 @@ public class DatabasePairSet implements GroupSet
 
     private void next(DatabasePair nextPair)
     {
-        currentPair = nextPair;
+        if (nextPair != null)
+        {
+            currentPair = nextPair;
+        }
         state = StateType.UNCHECKED;
     }
 
     private DatabasePair getNextPair()
     {
+        if (pairs == null || pairs.isEmpty())
+        {
+            return null;
+        }
         return pairs.get(pool.getNextIndex());
     }
 
@@ -178,7 +194,7 @@ public class DatabasePairSet implements GroupSet
         {
             pair.remove();
             pool.removeIndex(Integer.SIZE);
-            if (currentPair.equals(pair))
+            if (currentPair != null && currentPair.equals(pair))
             {
                 next();
             }
@@ -188,7 +204,10 @@ public class DatabasePairSet implements GroupSet
 
     public void deleteCurrentPair()
     {
-        deletePair(currentPair);
+        if (currentPair != null)
+        {
+            deletePair(currentPair);
+        }
     }
 
     public void setDatabase(PairDatabase database)
@@ -201,12 +220,18 @@ public class DatabasePairSet implements GroupSet
 
     public void update()
     {
-        currentPair.update();
+        if (currentPair != null)
+        {
+            currentPair.update();
+        }
     }
 
     public void setPairId(int id)
     {
-        currentPair.setPairId(id);
+        if (currentPair != null)
+        {
+            currentPair.setPairId(id);
+        }
     }
 
     public boolean remove()
@@ -246,22 +271,40 @@ public class DatabasePairSet implements GroupSet
 
     public String getKey()
     {
-        return currentPair.getKey();
+        if (currentPair == null)
+        {
+            return "";
+        } else
+        {
+            return currentPair.getKey();
+        }
     }
 
     public String getValue()
     {
-        return currentPair.getValue();
+        if (currentPair == null)
+        {
+            return "";
+        } else
+        {
+            return currentPair.getValue();
+        }
     }
 
     public void setKey(String key)
     {
-        currentPair.setKey(key);
+        if (currentPair != null)
+        {
+            currentPair.setKey(key);
+        }
     }
 
     public void setValue(String value)
     {
-        currentPair.setValue(value);
+        if (currentPair != null)
+        {
+            currentPair.setValue(value);
+        }
     }
 
     public int getProgress()
@@ -270,12 +313,19 @@ public class DatabasePairSet implements GroupSet
         {
             return -1;
         }
-        return (int) ((double) pool.getSize() / pool.getOriginalSize() * 100);
+//        Log.d("\n\n\nPROGRESS: ", "size:" + pool.getSize() + " - orig:" + pool.getOriginalSize() + "%");
+        return 100 - (pool.getSize() * 100 / pool.getOriginalSize());
     }
 
     public int getPairId()
     {
-        return currentPair.getPairId();
+        if (currentPair == null)
+        {
+            return -1;
+        } else
+        {
+            return currentPair.getPairId();
+        }
     }
 
     public Group getGroup()
@@ -285,6 +335,6 @@ public class DatabasePairSet implements GroupSet
 
     public void setGroupId(int id)
     {
-        group.setGroupId(id); 
+        group.setGroupId(id);
     }
 }

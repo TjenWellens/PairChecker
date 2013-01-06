@@ -13,7 +13,7 @@
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_weight=".75"
+        android:layout_weight="1"
         android:gravity="top" >
         <LinearLayout
             android:orientation="vertical"
@@ -36,51 +36,23 @@
                 android:textSize="30dp"
             />
         </LinearLayout>
-        
-        
-        <!--android:text="@string/check"-->
-        <!--android:background="@drawable/check"-->
-    </LinearLayout>
-   
-    <TextView  
-        android:id="@+id/txtScore"
-        android:layout_width="fill_parent" 
-        android:layout_height="wrap_content" 
-        android:text="@string/empty"
-        android:gravity="center"
-        android:textSize="20dp"
-            />
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight=".25"
-        android:gravity="center" 
-        android:id="@+id/pnlButtonsCheck">
-        <LinearLayout android:layout_width="match_parent"
-                      android:layout_height="match_parent"
-                      android:layout_weight=".33"> 
-        </LinearLayout>
         <Button
             android:id="@+id/btnCheck"
-            android:layout_width="fill_parent"
+            android:layout_width="0dip"
             android:layout_height="fill_parent"
             android:onClick="btnCheck"
             android:layout_weight=".33"
             style="@style/btn_check" />
-        <LinearLayout android:layout_width="match_parent"
-                      android:layout_height="match_parent"
-                      android:layout_weight=".33"> 
-        </LinearLayout>
+        <!--android:text="@string/check"-->
+        <!--android:background="@drawable/check"-->
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight=".25"
-        android:gravity="center" 
-        android:id="@+id/pnlButtonsCWS">
+        android:layout_height="120dp"
+        android:gravity="top" >
         <Button
             android:id="@+id/btnWrong"
-            android:layout_width="match_parent"
+            android:layout_width="0dip"
             android:layout_height="match_parent"
             android:layout_weight=".33"
             android:onClick="btnWrong"
@@ -89,23 +61,31 @@
         <!--android:background="@drawable/wrong"-->
         <Button
             android:id="@+id/btnCorrect"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="0dip"
             android:layout_weight=".33"
+            android:layout_height="match_parent"
             android:onClick="btnCorrect"
             style="@style/btn_correct" />
         <!--android:background="@drawable/correct"-->
         <!--android:text="@string/correct"-->
         <Button
             android:id="@+id/btnSkip"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="0dip"
             android:layout_weight=".33"
+            android:layout_height="match_parent"
             android:onClick="btnSkip"
             style="@style/btn_skip" />
         <!--android:background="@drawable/skip"-->
         <!--android:text="@string/skip"-->
     </LinearLayout>
+    <TextView  
+        android:id="@+id/txtScore"
+        android:layout_width="fill_parent" 
+        android:layout_height="wrap_content" 
+        android:text="@string/empty"
+        android:gravity="center"
+        android:textSize="20dp"
+            />
     
 </LinearLayout>
 

@@ -25,4 +25,6 @@ public interface MainModel
     void resetScore();
 
     boolean start();
+
+    int getScore();
 }
