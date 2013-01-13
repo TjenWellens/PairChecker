@@ -241,9 +241,9 @@ public class MainActivity extends Activity
             case R.id.menu_clear_score:
                 clearScore();
                 break;
-            case R.id.menu_overview:
-                launchOverview();
-                break;
+//            case R.id.menu_overview:
+//                launchOverview();
+//                break;
         }
         return true;
     }

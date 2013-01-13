@@ -16,7 +16,8 @@ import eu.tjenwellens.pairtester.activities.ListsActivity;
 public class ListPanel extends LinearLayout implements Group
 {
     private TextView tvName;
-    private Button btnSize, btnScore;
+    private Button btnSize; 
+//    private Button btnScore;
     private Group group;
     private ListsActivity groupPanelHandler;
 
@@ -59,31 +60,32 @@ public class ListPanel extends LinearLayout implements Group
             });
             // size
             btnSize = new Button(context);
-            btnSize.setText("(" + group.getSize() + ")");
-            btnSize.setClickable(true);
-            btnSize.setOnClickListener(new OnClickListener()
-            {
-                public void onClick(View arg0)
-                {
-                    Toast.makeText(ListPanel.this.groupPanelHandler, "Progress: " + group.getProgress() + "%", Toast.LENGTH_SHORT).show();
-                }
-            });
-            // score
-            btnScore = new Button(context);
-            btnScore.setText("" + group.getScore());
-            btnScore.setClickable(true);
-            btnScore.setOnClickListener(new OnClickListener()
-            {
-                public void onClick(View arg0)
-                {
-                    Toast.makeText(ListPanel.this.groupPanelHandler, "Correct: " + group.getCorrects() + "\nWrong: " + group.getWrongs() + "\nSkipped: " + group.getSkips(), Toast.LENGTH_LONG).show();
-                }
-            });
+            btnSize.setVisibility(View.INVISIBLE);
+//            btnSize.setText("(" + group.getSize() + ")");
+//            btnSize.setClickable(true);
+//            btnSize.setOnClickListener(new OnClickListener()
+//            {
+//                public void onClick(View arg0)
+//                {
+//                    Toast.makeText(ListPanel.this.groupPanelHandler, "Progress: " + group.getProgress() + "%", Toast.LENGTH_SHORT).show();
+//                }
+//            });
+//            // score
+//            btnScore = new Button(context);
+//            btnScore.setText("" + group.getScore());
+//            btnScore.setClickable(true);
+//            btnScore.setOnClickListener(new OnClickListener()
+//            {
+//                public void onClick(View arg0)
+//                {
+//                    Toast.makeText(ListPanel.this.groupPanelHandler, "Correct: " + group.getCorrects() + "\nWrong: " + group.getWrongs() + "\nSkipped: " + group.getSkips(), Toast.LENGTH_LONG).show();
+//                }
+//            });
 
             // add to gui
             this.addView(tvName, new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT, 1f));
             this.addView(btnSize, new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-            this.addView(btnScore, new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+//            this.addView(btnScore, new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
         }
     }
 
